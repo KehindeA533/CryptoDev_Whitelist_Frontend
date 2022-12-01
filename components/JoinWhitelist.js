@@ -10,6 +10,7 @@ export default function JoinWhitelist() {
   const dispatch = useNotification()
   const { isWeb3Enabled, chainId: chainIdHex } = useMoralis()
   const [numOfwhitelisted, setNumOfwhitelisted] = useState('0')
+  const [loading, setLoading] = useState(false)
 
   const chainId = parseInt(chainIdHex)
 
@@ -23,11 +24,7 @@ export default function JoinWhitelist() {
     params: {},
   })
 
-  const {
-    runContractFunction: getNumAddressesWhitelisted,
-    isLoading,
-    isFetching,
-  } = useWeb3Contract({
+  const { runContractFunction: getNumAddressesWhitelisted } = useWeb3Contract({
     abi: abi,
     contractAddress: whitelistAddress,
     functionName: 'getNumAddressesWhitelisted',
@@ -47,25 +44,30 @@ export default function JoinWhitelist() {
   }
 
   async function joinWhitelist() {
+    setLoading(true)
     await addAddressToWhitelist({
       onSuccess: handleSuccess,
       onError: (error) => {
         console.log(error)
-        if (error.code == -32603) {
-          handleErrorNotificationAddress()
-        }
+        handleErrorNotificationAddress()
       },
     })
+    setLoading(false)
   }
 
   useEffect(() => {
     if (isWeb3Enabled) {
       updateUIValues()
     }
-    if (chainId !== 5) {
+  }, [isWeb3Enabled])
+
+  useEffect(() => {
+    if (chainId === 5) {
+      null
+    } else {
       handleErrorNotification()
     }
-  }, [isWeb3Enabled])
+  }, [chainId])
 
   const handleNewNotification = () => {
     dispatch({
@@ -117,12 +119,8 @@ export default function JoinWhitelist() {
         <div className={styles.description}>
           {numOfwhitelisted} have already joined the whitelist
         </div>
-        <button
-          className={styles.button}
-          onClick={joinWhitelist}
-          disabled={isLoading || isFetching}
-        >
-          {isLoading || isFetching ? (
+        <button className={styles.button} onClick={joinWhitelist}>
+          {loading ? (
             <div className="animate-spin spinner-border h-8 w-8 border-b-2 rounded-full"></div>
           ) : (
             'Join Whitelist!'
