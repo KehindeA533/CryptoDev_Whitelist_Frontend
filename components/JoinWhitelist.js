@@ -62,7 +62,7 @@ export default function JoinWhitelist() {
     if (isWeb3Enabled) {
       updateUIValues()
     }
-    if (!whitelistAddress) {
+    if (chainId !== 5) {
       handleErrorNotification()
     }
   }, [isWeb3Enabled])
