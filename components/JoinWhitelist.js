@@ -49,7 +49,6 @@ export default function JoinWhitelist() {
       onSuccess: handleSuccess,
       onError: (error) => {
         console.log(error)
-        handleErrorNotificationAddress()
       },
     })
     setLoading(false)
@@ -62,9 +61,7 @@ export default function JoinWhitelist() {
   }, [isWeb3Enabled])
 
   useEffect(() => {
-    if (chainId === 5) {
-      null
-    } else {
+    if (chainId !== 5) {
       handleErrorNotification()
     }
   }, [chainId])
