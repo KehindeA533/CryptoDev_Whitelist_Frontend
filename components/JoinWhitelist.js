@@ -57,6 +57,9 @@ export default function JoinWhitelist() {
   useEffect(() => {
     if (isWeb3Enabled) {
       updateUIValues()
+      if (chainId !== 5) {
+        handleErrorNotification()
+      }
     }
   }, [isWeb3Enabled])
 
